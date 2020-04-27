@@ -1,0 +1,6 @@
+.venv/
+
+.idea/
+economic_system/__pycache__/
+
+model.md
