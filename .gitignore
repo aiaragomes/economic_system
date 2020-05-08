@@ -2,5 +2,6 @@
 
 .idea/
 economic_system/__pycache__/
+.ipynb_checkpoints
 
 model.md
