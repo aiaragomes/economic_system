@@ -89,8 +89,11 @@ class EconomicSystemModel(Model):
     Let's see what happens to the system.
     """
 
-    def __init__(self, width=10, height=10,
-                 services_pc=0.6, tax_industry=0.1, tax_services=0.2,
+    def __init__(self, width=10, height=10, services_pc=0.6,
+                 avg_opex=1.0, bankrupt=5.0,
+                 salary_industry=1000., salary_services=2000.,
+                 profit_industry=1.01, profit_services=1.02,
+                 tax_industry=0.1, tax_services=0.2,
                  nsteps=60):
         """ Initialization method of economic system model class
 
@@ -102,6 +105,18 @@ class EconomicSystemModel(Model):
             Grid height
         services_pc : float
             Services percentage in the economy
+        avg_opex : float
+            Average opex of companies
+        bankrupt : float
+            Bankrupt index as a percentage of opex
+        salary_industry : float
+            Average salary for industry sector
+        salary_services : float
+            Average salary for services sector
+        profit_industry : float
+            Average profit for industry sector
+        profit_services : float
+            Average profit for services sector
         tax_industry : float
             Tax rate for industry sector
         tax_services : float
@@ -147,8 +162,11 @@ class EconomicSystemModel(Model):
                 agent_type = 0
 
             # Initialize agent
+            salaries = [salary_industry, salary_services]
+            profits = [profit_industry, profit_services]
             tax_rates = [tax_industry, tax_services]
-            agent = IndustryAgent((x, y), self, agent_type, tax_rates)
+            agent = IndustryAgent((x, y), self, agent_type, avg_opex, bankrupt,
+                                  salaries, profits, tax_rates)
             self.grid.position_agent(agent, (x, y))
             self.schedule.add(agent)
 

@@ -8,8 +8,13 @@ import numpy as np
 from mesa import Agent
 
 
-def ic_opex():
+def ic_opex(avg_opex):
     """ Function to assign initial opex drawing from a normal distribution
+
+    Parameters
+    ----------
+    avg_opex : float
+        Average opex of companies
 
     Returns
     -------
@@ -17,8 +22,9 @@ def ic_opex():
         Initial opex
     """
 
-    # Draw opex from normal distribution
-    opex = np.random.normal(1.e6, 0.2e6)
+    # Draw opex from normal distribution, sigma is fixed to be 20% of average
+    avg_opex = avg_opex * 1.e6
+    opex = np.random.normal(avg_opex, 0.2 * avg_opex)
 
     # Fix possible minimum
     opex = opex if opex >= 1.e3 else 1.e3
@@ -26,7 +32,7 @@ def ic_opex():
     return opex
 
 
-def ic_capex(opex):
+def ic_capex(opex, bankrupt):
     """ Function to assign initial capex drawing from a uniform distribution
     a percentage of the opex
 
@@ -34,6 +40,8 @@ def ic_capex(opex):
     ----------
     opex : float
         Initial opex
+    bankrupt : float
+        Bankrupt index as a fraction of opex
 
     Returns
     -------
@@ -41,19 +49,22 @@ def ic_capex(opex):
         Initial capex
     """
 
-    # Draw capex from uniform distribution
-    capex = np.random.uniform(-0.01, 0.05) * opex
+    # Draw capex from uniform distribution,
+    # minimum is 20% of bankrupt index, max is bankrupt index
+    capex = np.random.uniform(-0.2*bankrupt, bankrupt) * opex
 
     return capex
 
 
-def ic_salary(type):
+def ic_salary(type, salaries):
     """ Function to assign workers average salary
 
     Parameters
     ----------
     type : int
         Company type
+    salaries : list
+        List with average salaries per sector
 
     Returns
     -------
@@ -61,9 +72,9 @@ def ic_salary(type):
         Average workers salary
     """
 
-    # Draw average salary from normal distribution
-    salary = np.random.normal(2000, 200) if type == 1 \
-        else np.random.normal(1000, 200)
+    # Draw average salary from normal distribution,
+    # sigma is fixed to be 20% of average
+    salary = np.random.normal(salaries[type], 0.2*salaries[type])
 
     # Fix minimum wage
     salary = salary if salary >= 600 else 600
@@ -103,13 +114,15 @@ def ic_employees(type, opex, salary):
     return employees
 
 
-def ic_profit_rate(type):
+def ic_profit_rate(type, profits):
     """ Function to assign company's profit rate
 
     Parameters
     ----------
     type : int
         Company type
+    profits : list
+        List with average profits per sector
 
     Returns
     -------
@@ -117,9 +130,9 @@ def ic_profit_rate(type):
         Company's profit rate
     """
 
-    # Draw profit rate from normal distribution
-    profit_rate = np.random.normal(1.05, 0.01) if type == 1 \
-        else np.random.normal(1.03, 0.01)
+    # Draw profit rate from normal distribution,
+    # sigma is fixed to 5% of profit rate
+    profit_rate = np.random.normal(profits[type], 0.05*profits[type])
 
     # Fix minimum profit rate
     profit_rate = profit_rate if profit_rate >= 1.001 else 1.001
@@ -158,7 +171,8 @@ class IndustryAgent(Agent):
     Industry agent class
     '''
 
-    def __init__(self, pos, model, agent_type, tax_rates):
+    def __init__(self, pos, model, agent_type, avg_opex, bankrupt,
+                 salaries, profits, tax_rates):
         """ Initialization method of industry agent class
 
         Parameters
@@ -169,6 +183,14 @@ class IndustryAgent(Agent):
             Economic system model class
         agent_type : int
             Label for industry agent
+        avg_opex : float
+            Average opex of companies
+        bankrupt : float
+            Bankrupt index as a percentage of opex
+        salaries : list
+            List with average salaries
+        profits : list
+            List with average profits per sector
         tax_rates : list
             List with tax rates
         """
@@ -177,11 +199,12 @@ class IndustryAgent(Agent):
         super().__init__(pos, model)
         self.pos = pos
         self.type = agent_type
-        self.opex = ic_opex()
-        self.capex = ic_capex(self.opex)
-        self.salary = ic_salary(self.type)
+        self.opex = ic_opex(avg_opex)
+        self.bankrupt = bankrupt/100.
+        self.capex = ic_capex(self.opex, self.bankrupt)
+        self.salary = ic_salary(self.type, salaries)
         self.employees = ic_employees(self.type, self.opex, self.salary)
-        self.profit_rate = ic_profit_rate(self.type)
+        self.profit_rate = ic_profit_rate(self.type, profits)
         self.products_value = self.profit_rate*self.opex
         self.sells = 0.0
         self.stocks = ic_stocks(self.type, self.products_value)
@@ -308,5 +331,5 @@ class IndustryAgent(Agent):
 
         # Check bankrupt state
         if self.capex < 0:
-            if -1*self.capex/self.opex > 0.05:
+            if -1*self.capex/self.opex > self.bankrupt:
                 self.type = -1
