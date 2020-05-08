@@ -71,8 +71,6 @@ model_params = {
                                    10, 2, 50, 1),
     "height": UserSettableParameter("slider", "Grid height",
                                     10, 2, 50, 1),
-    "industry_pc": UserSettableParameter("slider", "Fraction industry",
-                                         0.8, 0.1, 1.0, 0.1),
     "services_pc": UserSettableParameter("slider", "Fraction services",
                                          0.6, 0.00, 1.0, 0.05),
     "tax_industry": UserSettableParameter("slider", "Tax rate industry",

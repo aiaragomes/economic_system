@@ -90,8 +90,7 @@ class EconomicSystemModel(Model):
     """
 
     def __init__(self, width=10, height=10,
-                 industry_pc=0.8, services_pc=0.6,
-                 tax_industry=0.1, tax_services=0.2,
+                 services_pc=0.6, tax_industry=0.1, tax_services=0.2,
                  nsteps=60):
         """ Initialization method of economic system model class
 
@@ -101,10 +100,8 @@ class EconomicSystemModel(Model):
             Grid width
         height : int
             Grid height
-        industry_pc : float
-            Industry percentage in the system
         services_pc : float
-            Services percentage in the industry
+            Services percentage in the economy
         tax_industry : float
             Tax rate for industry sector
         tax_services : float
@@ -116,7 +113,6 @@ class EconomicSystemModel(Model):
         # Model input attributes
         self.width = width
         self.height = height
-        self.industry_pc = industry_pc
         self.services_pc = services_pc
         self.nsteps = nsteps
 
@@ -145,17 +141,16 @@ class EconomicSystemModel(Model):
             y = cell[2]
 
             # Assign industry type
-            if self.random.random() < self.industry_pc:
-                if self.random.random() < self.services_pc:
-                    agent_type = 1
-                else:
-                    agent_type = 0
+            if self.random.random() < self.services_pc:
+                agent_type = 1
+            else:
+                agent_type = 0
 
-                # Initialize agent
-                tax_rates = [tax_industry, tax_services]
-                agent = IndustryAgent((x, y), self, agent_type, tax_rates)
-                self.grid.position_agent(agent, (x, y))
-                self.schedule.add(agent)
+            # Initialize agent
+            tax_rates = [tax_industry, tax_services]
+            agent = IndustryAgent((x, y), self, agent_type, tax_rates)
+            self.grid.position_agent(agent, (x, y))
+            self.schedule.add(agent)
 
         # Running set to true and collect initial conditions
         self.running = True
