@@ -268,7 +268,7 @@ class IndustryAgent(Agent):
         Method to perform investment decision
         """
 
-        # The decision to invest or contract depends on the capex availability,
+        # The decision to invest or hire depends on the capex availability,
         # positive capex gives possibility of expansion,
         # negative capex means debt, the company might decide to shrink in size
         if self.capex > 0:
