@@ -240,7 +240,7 @@ class IndustryAgent(Agent):
                                            1.0*self.products_value)
 
         # The stocks of a company is what it was not able to sell
-        self.stocks += (self.products_value - self.sells)
+        self.stocks = (self.products_value - self.sells)
 
         # The profit is what was earned by sells minus the production cost
         self.profit = self.sells - self.opex
