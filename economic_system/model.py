@@ -70,10 +70,13 @@ def max_size_industry(model, industry_type=0):
     """
 
     if industry_type != -2:
+        # Employment in a sector
         agent_employment = [agent.employees for agent in model.schedule.agents
                             if agent.type == industry_type]
     else:
-        agent_employment = [agent.employees for agent in model.schedule.agents]
+        # Employment in the whole economy
+        agent_employment = [agent.employees for agent in model.schedule.agents
+                            if agent.type != -1]
 
     return max(agent_employment)
 
