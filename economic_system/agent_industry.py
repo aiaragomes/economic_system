@@ -14,7 +14,7 @@ def ic_opex(avg_opex):
     Parameters
     ----------
     avg_opex : float
-        Average opex of companies
+        Average opex of companies in millions
 
     Returns
     -------
