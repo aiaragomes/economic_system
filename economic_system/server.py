@@ -59,7 +59,7 @@ def economic_system_draw(agent):
 
 # Dashboard outputs
 gdp_element = GDPElement()
-canvas_element = CanvasGrid(economic_system_draw, 10, 10, 400, 400)
+canvas_element = CanvasGrid(economic_system_draw, 10, 10, 800, 400)
 employment_chart = ChartModule([
     {"Label": "Employment", "Color": "#0000FF"}],
     data_collector_name='datacollector'
@@ -86,7 +86,7 @@ model_params = {
     "tax_services": UserSettableParameter("slider", "Tax rate services",
                                           0.2, 0.01, 0.8, 0.01),
     "nsteps": UserSettableParameter("slider", "Months",
-                                    60, 12, 360, 12)
+                                    24, 12, 360, 12)
 }
 
 # Server

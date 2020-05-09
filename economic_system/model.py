@@ -97,7 +97,7 @@ class EconomicSystemModel(Model):
                  salary_industry=1000., salary_services=2000.,
                  profit_industry=1.01, profit_services=1.02,
                  tax_industry=0.1, tax_services=0.2,
-                 nsteps=60):
+                 nsteps=24):
         """ Initialization method of economic system model class
 
         Parameters
