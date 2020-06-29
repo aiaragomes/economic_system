@@ -2,4 +2,5 @@ jupyter==1.0.0
 matplotlib==3.2.1
 Mesa==0.8.6
 numpy==1.18.3
+scipy==1.4.1
 plotly==4.7.0

@@ -24,6 +24,18 @@ class GDPElement(TextElement):
         return "GDP: " + str(round(model.gdp/1.e9, 2)) + " billions"
 
 
+class WorkForceElement(TextElement):
+    '''
+    Display a text with current work force size
+    '''
+
+    def __init__(self):
+        pass
+
+    def render(self, model):
+        return "Work force: " + str(model.work_force)
+
+
 def economic_system_draw(agent):
     '''
     Portrayal method for canvas
@@ -59,7 +71,8 @@ def economic_system_draw(agent):
 
 # Dashboard outputs
 gdp_element = GDPElement()
-canvas_element = CanvasGrid(economic_system_draw, 10, 10, 800, 400)
+work_force_element = WorkForceElement()
+canvas_element = CanvasGrid(economic_system_draw, 20, 10, 800, 400)
 employment_chart = ChartModule([
     {"Label": "Employment", "Color": "#0000FF"}],
     data_collector_name='datacollector'
@@ -67,6 +80,10 @@ employment_chart = ChartModule([
 
 # Model parameters
 model_params = {
+    "n_workers": UserSettableParameter("slider", "# workers in millions",
+                                       0.1, 0.1, 5.0, 0.1),
+    "unemployment": UserSettableParameter("slider", "Unemplyment rate",
+                                          0.05, 0.0, 0.3, 0.01),
     "services_pc": UserSettableParameter("slider", "Fraction services",
                                          0.6, 0.00, 0.95, 0.05),
     "avg_opex": UserSettableParameter("slider", "Average opex in millions",
@@ -91,6 +108,7 @@ model_params = {
 
 # Server
 server = ModularServer(EconomicSystemModel,
-                       [canvas_element, gdp_element, employment_chart],
+                       [canvas_element, gdp_element, work_force_element,
+                        employment_chart],
                        "Economic system model", model_params)
 server.port = 8521
